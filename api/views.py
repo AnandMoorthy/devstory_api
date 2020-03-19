@@ -1,9 +1,11 @@
+import os
 from django.shortcuts import render
 from django.http import JsonResponse
 import json
 import requests
 import redis
 import feedparser
+import random
 
 # Create your views here.
 HN_TOP_STORIES = 'https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty'
@@ -18,66 +20,29 @@ coin_desk = 'http://feeds.feedburner.com/CoinDesk'
 hacker_news = 'https://news.ycombinator.com/rss'
 tech_crunch = 'http://feeds.feedburner.com/TechCrunch/'
 reddit = 'https://www.reddit.com/.rss'
-feed_list = [
-    "product_hunt",
-    "coin_desk",
-    "hacker_news",
-    "tech_crunch",
-    "reddit",
-    "the_next_web",
-    "mashable",
-    "gizmodo",
-    "lifehacker",
-    "makeuseof",
-]
-feeds = [
-    {
-        "name": "product_hunt",
-        "link": "https://www.producthunt.com/feed?category=tech"
-    },
-    {
-        "name": "coin_desk",
-        "link": "http://feeds.feedburner.com/CoinDesk"
-    },
-    {
-        "name": "hacker_news",
-        "link": "https://news.ycombinator.com/rss"
-    },
-    {
-        "name": "tech_crunch",
-        "link": "http://feeds.feedburner.com/TechCrunch/"
-    },
-    {
-        "name": "reddit",
-        "link": "https://www.reddit.com/.rss"
-    },
-    {
-        "name": "the_next_web",
-        "link": "https://thenextweb.com/feed/"
-    },
-    {
-        "name": "mashable",
-        "link": "http://feeds.mashable.com/Mashable"
-    },
-    {
-        "name": "gizmodo",
-        "link": "https://gizmodo.com/rss"
-    },
-    {
-        "name": "lifehacker",
-        "link": "https://lifehacker.com/rss"
-    },
-    {
-        "name": "makeuseof",
-        "link": "https://www.makeuseof.com/feed/"
-    }
-]
+bitcoin = 'https://api.coindesk.com/v1/bpi/currentprice.json'
+
+categories = ['Technology', 'Design', 'Business']
+
+feed_list = []
+
+def construct_feed_list():
+    cwd = os.getcwd()
+    file = cwd+'/api/source.json'
+    with open(file) as f:
+        data = json.load(f)
+        for feeds in data['data']:
+            for source in feeds['sources']:
+                feed_list.append(source['name_title'])
+    
 
 def dashboard(request):
     print(request.GET.get('data'))
+    construct_feed_list()
     stories = request.GET.get('data', None)
     if stories is None:
-        stories = feed_list
+        random.shuffle(feed_list)
+        stories = feed_list[0:9]
     else:
         stories = stories.split(',')
     result = []
@@ -85,7 +50,6 @@ def dashboard(request):
         flash = redis.Redis(host='localhost', port=6379, db=0)
     except Exception as e:
         print(e)
-        feed = []
     for feed in stories:
         hn = flash.get(feed).decode('utf-8')
         tmp = {
@@ -93,13 +57,15 @@ def dashboard(request):
             "data": json.loads(hn)
         }
         result.append(tmp)
-    bitcoin = flash.get('bitcoin')
-    if bitcoin:
-        bitcoin = bitcoin.decode('utf-8')
+    bitcoin_data = flash.get('bitcoin')
+    if bitcoin_data:
+        bitcoin_data = bitcoin_data.decode('utf-8')
+    available_stories = json.loads(flash.get('categories').decode('utf-8'))
     return JsonResponse({
         "message": "Success",
         "data": result,
-        "bitcoin": bitcoin
+        "bitcoin": bitcoin_data,
+        "available_stories": available_stories
     })
 
 def cron_job(requests):
@@ -110,9 +76,8 @@ def cron_job(requests):
     })
 
 def get_bitcoin():
-    url = 'https://api.coindesk.com/v1/bpi/currentprice.json'
     flash = redis.Redis(host='localhost', port=6379, db=0)
-    res = requests.get(url)
+    res = requests.get(bitcoin)
     if res.status_code == 200:
         data = json.loads(res.text)
         price = data['bpi']['USD']['rate']
@@ -121,23 +86,36 @@ def get_bitcoin():
 
 def update_feeds():
     flash = redis.Redis(host='localhost', port=6379, db=0)
-    for feed in feeds:
-        result = []
-        tmp_titles = []
-        count = 0
-        feed_result = feedparser.parse(feed['link'])
-        for data in feed_result['entries']:
-            if data['title'] not in tmp_titles:
-                tmp_titles.append(data['title'])
-                count += 1
-                tmp_res = {
-                    "title": data['title'],
-                    "link": data['link']
-                }
-                result.append(tmp_res)
-            if count >= 5:
-                break
-        flash.set(feed['name'], json.dumps(result))
+    cwd = os.getcwd()
+    file = cwd+'/api/source.json'
+    with open(file) as f:
+        data = json.load(f)
+    to_file = {}
+    for category in data['data']:
+        current_category = category['category']
+        sources = []
+        for source in category['sources']:
+            result = []
+            tmp_titles = []
+            count = 0
+            feed_result = feedparser.parse(source['link'])
+            sources.append(source['name_title'])
+            for data in feed_result['entries']:
+                if data['title'] not in tmp_titles:
+                    tmp_titles.append(data['title'])
+                    count += 1
+                    tmp_res = {
+                        "title": data['title'],
+                        "link": data['link']
+                    }
+                    result.append(tmp_res)
+                if count >= 20:
+                    break
+            to_file[current_category] = {
+                "sources": sources
+            }
+            flash.set(source['name_title'], json.dumps(result))
+    flash.set('categories', json.dumps(to_file))
 
 def get_hn():
     '''

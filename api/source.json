@@ -1,0 +1,169 @@
+{
+    "data": [
+        {
+            "category": "Technology",
+            "sources": [
+                {
+                    "name": "product_hunt",
+                    "name_title": "Product Hunt",
+                    "link": "https://www.producthunt.com/feed?category=tech"
+                },
+                {
+                    "name": "coin_desk",
+                    "name_title": "Coin Desk",
+                    "link": "http://feeds.feedburner.com/CoinDesk"
+                },
+                {
+                    "name": "hacker_news",
+                    "name_title": "Hacker News",
+                    "link": "https://news.ycombinator.com/rss"
+                },
+                {
+                    "name": "tech_crunch",
+                    "name_title": "Tech Crunch",
+                    "link": "http://feeds.feedburner.com/TechCrunch/"
+                },
+                {
+                    "name": "reddit",
+                    "name_title": "Reddit",
+                    "link": "https://www.reddit.com/.rss"
+                },
+                {
+                    "name": "the_next_web",
+                    "name_title": "The Next Web",
+                    "link": "https://thenextweb.com/feed/"
+                },
+                {
+                    "name": "mashable",
+                    "name_title": "Mashable",
+                    "link": "http://feeds.mashable.com/Mashable"
+                },
+                {
+                    "name": "gizmodo",
+                    "name_title": "Gizmodo",
+                    "link": "https://gizmodo.com/rss"
+                },
+                {
+                    "name": "lifehacker",
+                    "name_title": "Lifehacker",
+                    "link": "https://lifehacker.com/rss"
+                },
+                {
+                    "name": "makeuseof",
+                    "name_title": "makeuseof",
+                    "link": "https://www.makeuseof.com/feed/"
+                },
+                {
+                    "name": "cnet_news",
+                    "name_title": "CNET News",
+                    "link": "https://www.cnet.com/rss/news/"
+                },
+                {
+                    "name": "medium",
+                    "name_title": "Medium",
+                    "link": "https://medium.com/feed/tag/technology"
+                }
+            ]
+        },
+        {
+            "category": "Business",
+            "sources": [
+                {
+                    "name": "forbes",
+                    "name_title": "Forbes",
+                    "link": "http://www.forbesindia.com/rssfeeds/rss_magazine.xml"
+                },
+                {
+                    "name": "cnbc",
+                    "name_title": "CNBC",
+                    "link": "https://www.cnbc.com/id/100003114/device/rss/rss.html"
+                },
+                {
+                    "name": "economist",
+                    "name_title": "Economist",
+                    "link": "https://www.economist.com/business/rss.xml"
+                },
+                {
+                    "name": "business_insider",
+                    "name_title": "Business Insider",
+                    "link": "https://www.businessinsider.in/rss_section_feeds/21807169.cms"
+                },
+                {
+                    "name": "market_watch",
+                    "name_title": "Market Watch",
+                    "link": "http://feeds.marketwatch.com/marketwatch/topstories/"
+                },
+                {
+                    "name": "entrepreneur",
+                    "name_title": "Entrepreneur",
+                    "link": "http://feeds.feedburner.com/entrepreneur/latest"
+                },
+                {
+                    "name": "wall_street_journal",
+                    "name_title": "Wall Street Journal",
+                    "link": "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
+                },
+                {
+                    "name": "financial_times",
+                    "name_title": "Financial Times",
+                    "link": "https://feeds.a.dj.com/rss/RSSWorldNews.xml"
+                },
+                {
+                    "name": "investing",
+                    "name_title": "Investing",
+                    "link": "https://in.investing.com/rss/news_285.rss"
+                }
+            ]
+        },
+        {
+            "category": "Design",
+            "sources": [
+                {
+                    "name": "designer_news",
+                    "name_title": "Designer News",
+                    "link": "https://www.designernews.co/?format=rss"
+                },
+                {
+                    "name": "uxplanet",
+                    "name_title": "UX Planet",
+                    "link": "https://uxplanet.org/feed"
+                },
+                {
+                    "name": "uxdesign",
+                    "name_title": "UX Design",
+                    "link": "https://uxdesign.cc/feed"
+                },
+                {
+                    "name": "UX Booth",
+                    "name_title": "UX Booth",
+                    "link": "http://feedpress.me/uxbooth"
+                },
+                {
+                    "name": "uxmovement",
+                    "name_title": "UX Movement",
+                    "link": "https://uxmovement.com/feed/"
+                },
+                {
+                    "name": "design_shack",
+                    "name_title": "Design Shack",
+                    "link": "http://feedpress.me/designshack"
+                },
+                {
+                    "name": "speckyboy",
+                    "name_title": "Speckyboy",
+                    "link": "https://speckyboy.com/feed/"
+                },
+                {
+                    "name": "designmodo",
+                    "name_title": "Designmodo",
+                    "link": "https://designmodo.com/feed/"
+                },
+                {
+                    "name": "uxpin",
+                    "name_title": "UXPin",
+                    "link": "http://feedsrss.com/rss.php?q=uxpin"
+                }
+            ]
+        }
+    ]
+}
