@@ -47,10 +47,11 @@ def dashboard(request):
         stories = stories.split(',')
     result = []
     try:
-        flash = redis.Redis(host='localhost', port=6379, db=0)
+        flash = redis.Redis(host='redis-17256.c14.us-east-1-3.ec2.cloud.redislabs.com', port=17256, db=0, password='qhaH3zeAOgn6t6huFIxQhYx51iEGyEM2')
     except Exception as e:
         print(e)
     for feed in stories:
+        print("Story is", feed)
         hn = flash.get(feed).decode('utf-8')
         tmp = {
             "name": feed,
@@ -76,7 +77,7 @@ def cron_job(requests):
     })
 
 def get_bitcoin():
-    flash = redis.Redis(host='localhost', port=6379, db=0)
+    flash = redis.Redis(host='redis-17256.c14.us-east-1-3.ec2.cloud.redislabs.com', port=17256, db=0, password='qhaH3zeAOgn6t6huFIxQhYx51iEGyEM2')
     res = requests.get(bitcoin)
     if res.status_code == 200:
         data = json.loads(res.text)
@@ -85,7 +86,7 @@ def get_bitcoin():
     return "Done"
 
 def update_feeds():
-    flash = redis.Redis(host='localhost', port=6379, db=0)
+    flash = redis.Redis(host='redis-17256.c14.us-east-1-3.ec2.cloud.redislabs.com', port=17256, db=0, password='qhaH3zeAOgn6t6huFIxQhYx51iEGyEM2')
     cwd = os.getcwd()
     file = cwd+'/api/source.json'
     with open(file) as f:
@@ -116,58 +117,6 @@ def update_feeds():
             }
             flash.set(source['name_title'], json.dumps(result))
     flash.set('categories', json.dumps(to_file))
-
-def get_hn():
-    '''
-    This functio  to get the Hacker News Latest Stories
-    '''
-    result = []
-    flash = redis.Redis(host='localhost', port=6379, db=0)
-    try:
-        response = requests.get(HN_TOP_STORIES)
-        stories = json.loads(response.text)[:5]
-        for story_id in stories:
-            url = HN_STORY_DETAIL+str(story_id)+'.json'
-            story = json.loads(requests.get(url).text)
-            if 'title' not in story or 'url' not in story:
-                pass
-            else:
-                tmp_res = {
-                    "title": story['title'],
-                    "url": story.get('url', None)
-                }
-            result.append(tmp_res)
-        flash.set('hn', json.dumps(result))
-    except Exception as e:
-        print(e)
-    return result
-
-def get_ph():
-    '''
-    This Function to get the Product Hunt Latest Stories
-    '''
-    flash = redis.Redis(host='localhost', port=6379, db=0)
-    headers = {"Authorization": "Bearer "+PH_TOKEN}
-    params = {
-        "sort_by": "votes_count",
-        "order": "desc",
-        "search[featured]": True,
-        "per_page": 5
-    }
-    result = []
-    try:
-        res = json.loads(requests.get(PH_TOP_STORIES, params=params, headers=headers).text)
-        for data in res['posts'][:5]:
-            tmp_res = {
-                "name": data['name'],
-                "tagline": data['tagline'],
-                "url": data['discussion_url']
-            }
-            result.append(tmp_res)
-        flash.set('ph', json.dumps(result))
-    except Exception as e:
-        print(e)
-    return result
 
 
     
